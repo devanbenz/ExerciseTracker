@@ -20,18 +20,53 @@ const db = mongoose.connect(uri, {useNewUrlParser:true, useUnifiedTopology: true
 
 // Create user schema 
 const UserSchema = mongoose.Schema({
-  name: String
+  name: String,
+  description: String,
+  duration: Number,
+  date: Number
 })
 // Create a URL model out of the schema 
-const Urls = mongoose.model('Users', UserSchema)
+const Users = mongoose.model('Users', UserSchema)
 
 
 //-----------------------------------------------------------------------------------------
 
-app.post('/api/users', (req, res) => {
-  res.json({username: req.body.username})
+app.post('/api/users', async (req, res) => {
+  // Pull username from body request
+  const { username } = req.body
+  
+  // Check if user exists
+  const userExists = await Users.exists({ name:username })
+  if(userExists){
+    res.send('User exists')
+  }
+  else {
+    // Add user to db 
+    const userAdd = await Users.create({
+      name: username
+    })
+    userAdd.save()
+  
+    // Send response object to browser 
+    res.json({
+      _id: userAdd._id,
+      username: userAdd.name,
+    })
+  }
 })
 
+app.get('/api/users', async (req, res) => {
+  const userArr = {}
+  const all = await Users.find({})
+  
+  for(let i = 1; i < all.length; i++) {
+    userArr.i = all
+  }
+  // List all users
+  res.send(userArr.i)
+
+})
+  
 
 
 
