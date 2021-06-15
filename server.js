@@ -21,6 +21,11 @@ const db = mongoose.connect(uri, {useNewUrlParser:true, useUnifiedTopology: true
 // Create user schema 
 const UserSchema = mongoose.Schema({
   username: String,
+  log: [{
+      description: String,
+      duration: Number,
+      date: String
+    }],
   description: String,
   duration: Number,
   date: Number
@@ -65,6 +70,24 @@ app.get('/api/users', async (req, res) => {
   // List all users
   res.send(userArr.i)
 
+})
+
+app.post('/api/users/:_id/exercises', async (req, res) =>{
+
+  try {
+    const { description, duration, date } = req.body
+    const { _id } = req.params
+    const user = await Users.findById(_id)
+
+    res.json({
+      _id: _id,
+      username: user.username,
+      description: description,
+      duration: duration,
+      date: date
+    })
+  }
+  catch(e) { console.log(e) }
 })
 
 app.get('/api/purge', async (req, res) => {
