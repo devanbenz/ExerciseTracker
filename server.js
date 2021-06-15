@@ -20,7 +20,7 @@ const db = mongoose.connect(uri, {useNewUrlParser:true, useUnifiedTopology: true
 
 // Create user schema 
 const UserSchema = mongoose.Schema({
-  name: String,
+  username: String,
   description: String,
   duration: Number,
   date: Number
@@ -36,21 +36,21 @@ app.post('/api/users', async (req, res) => {
   const { username } = req.body
   
   // Check if user exists
-  const userExists = await Users.exists({ name:username })
+  const userExists = await Users.exists({ username:username })
   if(userExists){
     res.send('User exists')
   }
   else {
     // Add user to db 
     const userAdd = await Users.create({
-      name: username
+      username: username
     })
     userAdd.save()
   
     // Send response object to browser 
     res.json({
       _id: userAdd._id,
-      username: userAdd.name,
+      username: userAdd.username,
     })
   }
 })
