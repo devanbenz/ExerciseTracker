@@ -70,6 +70,7 @@ app.get('/api/users', async (req, res) => {
 app.get('/api/purge', async (req, res) => {
   try{
     await Users.deleteMany({})
+    res.send("Users removed")
   }catch(e){ console.log(e)}
 })
   
