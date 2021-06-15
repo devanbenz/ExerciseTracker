@@ -66,6 +66,12 @@ app.get('/api/users', async (req, res) => {
   res.send(userArr.i)
 
 })
+
+app.get('/api/purge', async (req, res) => {
+  try{
+    await Users.deleteMany({})
+  }catch(e){ console.log(e)}
+})
   
 
 
