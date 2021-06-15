@@ -61,14 +61,12 @@ app.post('/api/users', async (req, res) => {
 })
 
 app.get('/api/users', async (req, res) => {
-  const userArr = {}
-  const all = await Users.find({})
-  
-  for(let i = 1; i < all.length; i++) {
-    userArr.i = all
-  }
-  // List all users
-  res.send(userArr.i)
+  const userArr = []
+  const all = await Users.find({}).select("-log")
+
+  all.forEach(x => userArr.push(x))
+
+  res.send(userArr)
 
 })
 

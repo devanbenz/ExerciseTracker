@@ -2,3 +2,6 @@ node_modules
 package-lock.json
 .env
 sample.env
+.dockerignore 
+docker-compose.yaml
+Dockerfile
