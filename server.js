@@ -21,14 +21,13 @@ const db = mongoose.connect(uri, {useNewUrlParser:true, useUnifiedTopology: true
 // Create user schema 
 const UserSchema = mongoose.Schema({
   username: String,
+  count: Number,
   log: [{
+      _id: false,
       description: String,
       duration: Number,
       date: String
-    }],
-  description: String,
-  duration: Number,
-  date: Number
+    }]
 })
 // Create a URL model out of the schema 
 const Users = mongoose.model('Users', UserSchema)
@@ -77,18 +76,17 @@ app.post('/api/users/:_id/exercises', async (req, res) =>{
     const { _id } = req.params
 
     if(!date) {
-      date = new Date().getUTCDate().toDateString()
+      date = new Date().toDateString()
     }else{
-      date = new Date(date).getUTCDate().toDateString()
+      date = new Date(`${date} 00:00:00`).toDateString()
     }
-
-    const user = await Users.findById(_id)
-    // const user = await Users.findByIdAndUpdate(_id, { $push: {log: [{
-    //   description: description,
-    //   duration: duration,
-    //   date: date      
-    // }]}})
-    // user.save()
+    
+    const user = await Users.findByIdAndUpdate(_id, { $push: {log: [{
+      description: description,
+      duration: duration,
+      date: date      
+    }]}}) // <----- ew 
+    user.save()
 
     res.json({
       _id: _id,
@@ -112,8 +110,13 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   try {
     const { _id } = req.params
     const user = await Users.findById(_id)
-
-    res.json(user)
+    user.count = user.log.length
+    res.json({
+      _id: user._id,
+      username: user.username,
+      count: user.count,
+      log: user.log
+    })
 
   }catch(e){ console.log(e) }
 })
