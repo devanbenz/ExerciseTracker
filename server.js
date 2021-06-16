@@ -75,14 +75,23 @@ app.post('/api/users/:_id/exercises', async (req, res) =>{
   try {
     const { description, duration, date } = req.body
     const { _id } = req.params
-    const user = await Users.findById(_id)
+
+    if(!date) {
+      date = new Date().toUTCString()
+    }
+    // const user = await Users.findByIdAndUpdate(_id, { $push: {log: [{
+    //   description: description,
+    //   duration: duration,
+    //   date: date      
+    // }]}})
+    // user.save()
 
     res.json({
       _id: _id,
       username: user.username,
       description: description,
       duration: duration,
-      date: date
+      date: date 
     })
   }
   catch(e) { console.log(e) }
@@ -92,9 +101,18 @@ app.get('/api/purge', async (req, res) => {
   try{
     await Users.deleteMany({})
     res.send("Users removed")
-  }catch(e){ console.log(e)}
+  }catch(e){ console.log(e) }
 })
-  
+
+app.get('/api/users/:_id/logs', async (req, res) => { 
+  try {
+    const { _id } = req.params
+    const user = await Users.findById(_id)
+
+    res.json(user)
+
+  }catch(e){ console.log(e) }
+})
 
 
 
