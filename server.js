@@ -73,12 +73,16 @@ app.get('/api/users', async (req, res) => {
 app.post('/api/users/:_id/exercises', async (req, res) =>{
 
   try {
-    const { description, duration, date } = req.body
+    let { description, duration, date } = req.body
     const { _id } = req.params
 
     if(!date) {
-      date = new Date().toUTCString()
+      date = new Date().getUTCDate().toDateString()
+    }else{
+      date = new Date(date).getUTCDate().toDateString()
     }
+
+    const user = await Users.findById(_id)
     // const user = await Users.findByIdAndUpdate(_id, { $push: {log: [{
     //   description: description,
     //   duration: duration,
