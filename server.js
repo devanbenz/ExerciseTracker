@@ -87,7 +87,7 @@ app.post('/api/users/:_id/exercises', async (req, res) =>{
   try {
 
     res.json({
-      _id: _id,
+      _id: user._id,
       username: user.username,
       description: description,
       duration: duration,
