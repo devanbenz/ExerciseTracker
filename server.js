@@ -84,14 +84,15 @@ app.post('/api/users/:_id/exercises', async (req, res) =>{
       description: description,
       duration: duration,
       date: date      
-    }]}}) // <----- ew 
+    }]}}, {new: true}) // <----- ew 
+    user.save()
 
     res.status(200).json({
       _id: user._id,
       username: user.username,
-      description: description,
-      duration: duration,
-      date: date 
+      description: user.log[user.log.length - 1].description,
+      duration: user.log[user.log.length - 1].duration,
+      date: user.log[user.log.length - 1].date 
     }).end()
   }
   catch(e) { console.log(e) }
