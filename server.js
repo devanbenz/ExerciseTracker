@@ -70,23 +70,21 @@ app.get('/api/users', async (req, res) => {
 })
 
 app.post('/api/users/:_id/exercises', async (req, res) =>{
+  let { description, duration, date } = req.body
+  const { _id } = req.params
 
+  if(!date) {
+    date = new Date().toDateString()
+  }else{
+    date = new Date(`${date} 00:00:00`).toDateString()
+  }
+  
+  let user = await Users.findByIdAndUpdate(_id, { $push: {log: [{
+    description: description,
+    duration: duration,
+    date: date      
+  }]}}) // <----- ew 
   try {
-    let { description, duration, date } = req.body
-    const { _id } = req.params
-
-    if(!date) {
-      date = new Date().toDateString()
-    }else{
-      date = new Date(`${date} 00:00:00`).toDateString()
-    }
-    
-    const user = await Users.findByIdAndUpdate(_id, { $push: {log: [{
-      description: description,
-      duration: duration,
-      date: date      
-    }]}}) // <----- ew 
-    user.save()
 
     res.json({
       _id: _id,
