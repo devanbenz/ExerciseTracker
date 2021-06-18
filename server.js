@@ -108,19 +108,27 @@ app.get('/api/purge', async (req, res) => {
 app.get('/api/users/:_id/logs', async (req, res) => { 
   try {
     const { _id } = req.params
-    const user = await Users.findById(_id)
-    user.count = user.log.length
+    let user = await Users.findById(_id)
+    if(req.query.from) {
+      console.log(req.query.from)
+      // user.log.forEach( x => {
+      //   if(Date.parse(x.date) >= Date.parse(req.query.from)){
+      //     console.log(x)
+      //   }
+      // })
+      user = await Users.findById(_id).where({ log: { $elemMatch: { duration: 20}}})
+      console.log(user)
+    }
+
     res.json({
       _id: user._id,
       username: user.username,
-      count: user.count,
+      count: user.log.length,
       log: user.log
     })
 
   }catch(e){ console.log(e) }
 })
-
-
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
