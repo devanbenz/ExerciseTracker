@@ -108,23 +108,41 @@ app.get('/api/purge', async (req, res) => {
 app.get('/api/users/:_id/logs', async (req, res) => { 
   try {
     const { _id } = req.params
+    let logArr = []
     let user = await Users.findById(_id)
-    if(req.query.from) {
+    if(req.query.from && req.query.to) {
       console.log(req.query.from)
-      // user.log.forEach( x => {
-      //   if(Date.parse(x.date) >= Date.parse(req.query.from)){
-      //     console.log(x)
-      //   }
-      // })
-      user = await Users.findById(_id).where({ log: { $elemMatch: { duration: 20}}})
-      console.log(user)
+      user.log.forEach( x => {
+        if(Date.parse(x.date) >= Date.parse(req.query.from) && Date.parse(x.date) <= Date.parse(req.query.to)){
+          logArr.push(x)  
+        }
+      })
     }
+    else if(req.query.from) {
+      console.log(req.query.from)
+      user.log.forEach( x => {
+        if(Date.parse(x.date) >= Date.parse(req.query.from)){
+          logArr.push(x)
+        }
+      })
+    }
+    else{
+      user.log.forEach( x => {
+        logArr.push(x)
+      })
+    }
+
+    if(req.query.limit){
+      logArr.length = req.query.limit
+    }
+
+    console.log(logArr)
 
     res.json({
       _id: user._id,
       username: user.username,
       count: user.log.length,
-      log: user.log
+      log: logArr
     })
 
   }catch(e){ console.log(e) }
